@@ -11,8 +11,8 @@
         vm.getSummary = function () {
             const url ="http://localhost:3003/api/billingSummary";
 
-            $http.get(url).then( function (result) {
-                var data = result.data;
+            $http.get(url).then( function (response) {
+                var data = response.data;
                 vm.credit = data.credit;
                 vm.debt = data.debt;
                 vm.total = data.credit - data.debt;
