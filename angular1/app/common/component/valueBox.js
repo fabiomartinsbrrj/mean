@@ -14,7 +14,7 @@ angular.module('primeiraApp').component('valueBox', {
             var vm = this;
             this.$onInit = function() {
                 this.gridClasses = gridSystem.toCssClasses(vm.grid);
-                console.log(' szsss '+vm.gridClasses);
+                
             }
         }
   ],
