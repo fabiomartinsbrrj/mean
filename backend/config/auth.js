@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     //CORS preflight request
     if (req.method === 'OPTIONS') {
         next();
-    } esle {
+    } else {
         const token = req.body.token || req.query.token || req.headers['authorization']
 
         if (!token) {

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('./user');
-const env = require('../../env');
+const env = require('../../.env');
 
 const emailRegex = /\S+@\S+\.\S+/
 const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/
@@ -10,7 +10,8 @@ const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,12})/
 const sendErrorsFormDB = (res, dbErrors) => {
     const errors = [];
     _.forIn(dbErrors.errors, error => errors.push(error.message));
-    return res.status(400).json({errors});
+    console.log(errors)
+    return res.status(400).json({ errors });
 };
 
 const login = (req, res, next) => {
@@ -23,17 +24,18 @@ const login = (req, res, next) => {
         } else if (user && bcrypt.compareSync(password, user.password)) {
             const token = jwt.sign(user, env.authSecret, {
                 expiresIn: "1 day"
+                //expiresIn: "10 second"
             });
 
             const { name, email } = user;
-            res.json( { name, email, toekn } );
+            res.json( { name, email, token } );
         } else {
             return res.status(400).send( { errors: ['Usuário/Senha inválidos']} ) ;
         }
     });
 }
 
-const validateToken = (refq, res, next) => {
+const validateToken = (req, res, next) => {
     const token = req.body.token || '';
 
     jwt.verify(token, env.authSecret, function (err, decoded) {
@@ -69,12 +71,12 @@ const signup = (req, res, next) =>  {
         } else if (user) {
            return res.status(400).send( { errors: ['Usuário ja cadastrado!']} ) ;
         } else {
-            const newUser = User( { name, email, password: passworHash);
+            const newUser = User( { name, email, password: passwordHash } );
             newUser.save(err=>{
                 if (err) {
                     return sendErrorsFormDB(res, req);
                 } else {
-                    login(req, rees, next);
+                    login(req, res, next);
                 }
             });
         }
